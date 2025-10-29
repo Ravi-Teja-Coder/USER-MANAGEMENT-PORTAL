@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="header">
+    <h1>User Management Portal</h1>
+    <a routerLink="/users/new" class="btn btn-primary">
+      + Add New User
+    </a>
+  </div>
+
+  <!-- 🎯 TEMPLATE-DRIVEN FORM for search -->
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="🔍 Search users by name or email..."
+      (input)="onSearch($event)"
+      class="search-input"
+    />
+  </div>
+
+  <!-- 🎯 @if directive (Angular 20 control flow) -->
+  @if (user.loading()) {
+    <div class="loading">⏳ Loading users...</div>
+  }
+
+  @if (user.error()) {
+    <div class="error">❌ {{ user.error() }}</div>
+  }
+
+  <!-- 🎯 @for directive (Angular 20 control flow) -->
+  @if (!user.loading() && filteredUsers().length > 0) {
+    <div class="user-grid">
+      @for (user of filteredUsers(); track user.id) {
+        <div class="user-card" appHighlight="#f0f8ff">
+          <div class="user-header">
+            <h3>{{ user.name }}</h3>
+            <span class="user-id">#{{ user.id }}</span>
+          </div>
+          
+          <div class="user-info">
+            <p><strong>📧 Email:</strong> {{ user.email }}</p>
+            <p><strong>📱 Phone:</strong> {{ user.phone }}</p>
+            <p><strong>🏢 Company:</strong> {{ user.company.name }}</p>
+            <p><strong>🌐 Website:</strong> {{ user.website }}</p>
+          </div>
+
+          <div class="user-actions">
+            <a [routerLink]="['/users', user.id]" class="btn btn-info">
+              👁️ View
+            </a>
+            <a [routerLink]="['/users', user.id, 'edit']" class="btn btn-warning">
+              ✏️ Edit
+            </a>
+            <!-- <button (click)="deleteUser(user.id)" class="btn btn-danger">
+              🗑️ Delete
+            </button> -->
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!user.loading() && filteredUsers().length === 0) {
+    <div class="no-results">
+      <p>No users found matching "{{ searchTerm() }}"</p>
+    </div>
+  }
+</div>
